@@ -8,9 +8,9 @@ pub struct DualShock4Interface<'a> {
 
 impl<'a> DualShock4Interface<'a> {
     pub fn new(_msg: &'a sensor_msgs::msg::Joy) -> Self {
-        DualShock4Interface { msg: _msg}
+        DualShock4Interface { msg: _msg }
     }
-    pub fn set_joy_msg(&mut self, _msg: &'a sensor_msgs::msg::Joy){
+    pub fn set_joy_msg(&mut self, _msg: &'a sensor_msgs::msg::Joy) {
         self.msg = _msg;
     }
     pub fn pressed_PS(&self) -> bool {
@@ -27,6 +27,18 @@ impl<'a> DualShock4Interface<'a> {
     }
     pub fn pressed_l2(&self) -> bool {
         self.msg.buttons.as_slice()[BUTTONS_DUALSHOCK4::L2] == 1
+    }
+    pub fn pressed_cross(&self) -> bool {
+        self.msg.buttons.as_slice()[BUTTONS_DUALSHOCK4::CROSS] == 1
+    }
+    pub fn pressed_circle(&self) -> bool {
+        self.msg.buttons.as_slice()[BUTTONS_DUALSHOCK4::CIRCLE] == 1
+    }
+    pub fn pressed_triangle(&self) -> bool {
+        self.msg.buttons.as_slice()[BUTTONS_DUALSHOCK4::TRIANGLE] == 1
+    }
+    pub fn pressed_square(&self) -> bool {
+        self.msg.buttons.as_slice()[BUTTONS_DUALSHOCK4::SQUARE] == 1
     }
     pub fn pressed_dpad_left(&self) -> bool {
         self.msg.axes.as_slice()[AXES_DUALSHOCK4::DPAD_X] > 0.0
