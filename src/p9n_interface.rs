@@ -43,10 +43,13 @@ impl<'a> DualShock4Interface<'a> {
     pub fn pressed_dpad_left(&self) -> bool {
         self.msg.axes.as_slice()[AXES_DUALSHOCK4::DPAD_X] > 0.0
     }
+    pub fn pressed_dpad_right(&self) -> bool {
+        self.msg.axes.as_slice()[AXES_DUALSHOCK4::DPAD_X] < 0.0
+    }
     pub fn pressed_dpad_up(&self) -> bool {
         self.msg.axes.as_slice()[AXES_DUALSHOCK4::DPAD_Y] > 0.0
     }
-    pub fn pressed_dpad_right(&self) -> bool {
-        self.msg.axes.as_slice()[AXES_DUALSHOCK4::DPAD_X] < 0.0
+    pub fn pressed_dpad_down(&self) -> bool {
+        self.msg.axes.as_slice()[AXES_DUALSHOCK4::DPAD_Y] < 0.0
     }
 }
