@@ -1,8 +1,8 @@
 pub mod p9n_interface;
-pub mod pro_controller;
 pub mod ps4_dualshock4;
 pub mod ps5_dualsense;
 
+pub use p9n_interface::ButtonState;
 pub use p9n_interface::Gamepad;
 pub use ps4_dualshock4::DualShock4Layout;
 pub use ps5_dualsense::DualSenseLayout;
