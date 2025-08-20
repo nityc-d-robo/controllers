@@ -1,4 +1,4 @@
-#[allow(non_snake_case,non_upper_case_globals)]
+#[allow(non_snake_case, non_upper_case_globals)]
 pub mod AXES_SWITCH_PRO {
     pub const STICK_LX: usize = 0;
     pub const STICK_LY: usize = 1;
@@ -8,7 +8,7 @@ pub mod AXES_SWITCH_PRO {
     pub const DPAD_Y: usize = 5;
 }
 
-
+#[allow(non_snake_case, non_upper_case_globals)]
 pub mod BUTTONS_SWITCH_PRO {
     pub const B: usize = 0;
     pub const A: usize = 1;
