@@ -19,7 +19,7 @@ pub enum Button {
     DpadDown,
 }
 
-pub type ButtonState = [bool; 12];
+pub type ButtonState = [bool; 13];
 
 pub trait GamepadLayout {
     fn ps(&self, msg: &Joy) -> bool;
