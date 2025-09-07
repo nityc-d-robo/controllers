@@ -1,8 +1,7 @@
-use safe_drive::msg::interfaces::lifecycle_msgs::msg::State;
-
 use super::*;
 // 共通のインターフェース
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Button {
     PS,
     L1,
@@ -19,7 +18,11 @@ pub enum Button {
     DpadDown,
 }
 
-pub type ButtonState = [bool; 13];
+impl Button {
+    pub const fn count() -> usize {
+        13 // enum の総数
+    }
+}
 
 pub trait GamepadLayout {
     fn ps(&self, msg: &Joy) -> bool;
@@ -45,138 +48,52 @@ pub trait GamepadLayout {
     }
 }
 
-pub struct Gamepad<'a, L: GamepadLayout> {
-    msg: &'a Joy,
+pub struct Gamepad<L: GamepadLayout> {
     layout: L,
+    prev_buttons: [bool; Button::count()],
 }
 
-impl<'a, L: GamepadLayout> Gamepad<'a, L> {
-    pub fn new(msg: &'a Joy, layout: L) -> Self {
-        Self { msg, layout }
+impl<L: GamepadLayout> Gamepad<L> {
+    pub fn new(layout: L) -> Self {
+        Self {
+            layout,
+            prev_buttons: [false; Button::count()],
+        }
+    }
+    /// ボタンが現在押されているか（汎用版）
+    pub fn pressed(&self, msg: &Joy, button: Button) -> bool {
+        match button {
+            Button::PS => self.layout.ps(msg),
+            Button::L1 => self.layout.l1(msg),
+            Button::R1 => self.layout.r1(msg),
+            Button::L2 => self.layout.l2(msg),
+            Button::R2 => self.layout.r2(msg),
+            Button::Cross => self.layout.cross(msg),
+            Button::Circle => self.layout.circle(msg),
+            Button::Triangle => self.layout.triangle(msg),
+            Button::Square => self.layout.square(msg),
+            Button::DpadLeft => self.layout.dpad_left(msg),
+            Button::DpadRight => self.layout.dpad_right(msg),
+            Button::DpadUp => self.layout.dpad_up(msg),
+            Button::DpadDown => self.layout.dpad_down(msg),
+        }
     }
 
-    pub fn pressed_ps(&self) -> bool {
-        self.layout.ps(&self.msg)
+    /// ボタンの立ち上がり（押された瞬間）を検出
+    pub fn pressed_edge(&mut self, msg: &Joy, button: Button) -> bool {
+        let idx = button as usize;
+        let current = self.pressed(msg, button);
+        let previous = self.prev_buttons[idx];
+        self.prev_buttons[idx] = current;
+        !previous && current
     }
 
-    pub fn pressed_l1(&self) -> bool {
-        self.layout.l1(&self.msg)
-    }
-
-    pub fn pressed_r1(&self) -> bool {
-        self.layout.r1(&self.msg)
-    }
-
-    pub fn pressed_l2(&self) -> bool {
-        self.layout.l2(&self.msg)
-    }
-
-    pub fn pressed_r2(&self) -> bool {
-        self.layout.r2(&self.msg)
-    }
-
-    pub fn pressed_cross(&self) -> bool {
-        self.layout.cross(&self.msg)
-    }
-
-    pub fn pressed_circle(&self) -> bool {
-        self.layout.circle(&self.msg)
-    }
-
-    pub fn pressed_triangle(&self) -> bool {
-        self.layout.triangle(&self.msg)
-    }
-
-    pub fn pressed_square(&self) -> bool {
-        self.layout.square(&self.msg)
-    }
-
-    pub fn pressed_dpad_left(&self) -> bool {
-        self.layout.dpad_left(&self.msg)
-    }
-
-    pub fn pressed_dpad_right(&self) -> bool {
-        self.layout.dpad_right(&self.msg)
-    }
-
-    pub fn pressed_dpad_up(&self) -> bool {
-        self.layout.dpad_up(&self.msg)
-    }
-
-    pub fn pressed_dpad_down(&self) -> bool {
-        self.layout.dpad_down(&self.msg)
-    }
-
-    pub fn pressed_ps_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::PS as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_ps()) == false && prev_buttons[idx]
-    }
-
-    pub fn pressed_l1_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::L1 as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_l1()) == false && prev_buttons[idx]
-    }
-
-    pub fn pressed_r1_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::R1 as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_r1()) == false && prev_buttons[idx]
-    }
-
-    pub fn pressed_l2_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::L2 as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_l2()) == false && prev_buttons[idx]
-    }
-
-    pub fn pressed_r2_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::R2 as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_r2()) == false && prev_buttons[idx]
-    }
-
-    pub fn pressed_cross_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::Cross as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_cross()) == false
-            && prev_buttons[idx]
-    }
-
-    pub fn pressed_circle_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::Circle as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_circle()) == false
-            && prev_buttons[idx]
-    }
-
-    pub fn pressed_triangle_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::Triangle as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_triangle()) == false
-            && prev_buttons[idx]
-    }
-
-    pub fn pressed_square_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::Square as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_square()) == false
-            && prev_buttons[idx]
-    }
-
-    pub fn pressed_dpad_left_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::DpadLeft as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_dpad_left()) == false
-            && prev_buttons[idx]
-    }
-
-    pub fn pressed_dpad_right_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::DpadRight as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_dpad_right()) == false
-            && prev_buttons[idx]
-    }
-
-    pub fn pressed_dpad_up_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::DpadUp as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_dpad_up()) == false
-            && prev_buttons[idx]
-    }
-
-    pub fn pressed_dpad_down_edge(&mut self, prev_buttons: &mut ButtonState) -> bool {
-        let idx = Button::DpadDown as usize;
-        std::mem::replace(&mut prev_buttons[idx], self.pressed_dpad_down()) == false
-            && prev_buttons[idx]
+    /// ボタンの立ち下がり（離された瞬間）を検出
+    pub fn released_edge(&mut self, msg: &Joy, button: Button) -> bool {
+        let idx = button as usize;
+        let current = self.pressed(msg, button);
+        let previous = self.prev_buttons[idx];
+        self.prev_buttons[idx] = current;
+        previous && !current
     }
 }
