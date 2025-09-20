@@ -3,12 +3,14 @@ use p9n_interface::GamepadLayout;
 use std::collections::HashMap;
 use strum::IntoEnumIterator;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum State {
     Pressed,
     PressedEdge,
     Ignored,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ButtonState(Button, State);
 
 impl Button {
@@ -17,6 +19,7 @@ impl Button {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ButtonCombination {
     buttons: HashMap<Button, State>,
 }
@@ -28,9 +31,18 @@ impl ButtonCombination {
         }
     }
 
-    pub fn aad(mut self, button_state: ButtonState) -> Self {
-        self.buttons.insert(button_state.0, button_state.1);
-        self
+    pub fn add(&self, button_state: ButtonState) -> Self {
+        let mut next = self.clone();
+        next.buttons.insert(button_state.0, button_state.1);
+        next
+    }
+
+    pub fn ignores(&self, buttons: &[Button]) -> Self {
+        let mut next = self.clone();
+        for &button in buttons {
+            next.buttons.insert(button, State::Ignored);
+        }
+        next
     }
 
     pub fn evalute<L: GamepadLayout>(&self, gamepad: &mut Gamepad<L>, msg: &Joy) -> bool {
