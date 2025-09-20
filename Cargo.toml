@@ -5,3 +5,5 @@ edition = "2021"
 
 [dependencies]
 safe_drive = "0.4.3"
+strum = "0.27.2"
+strum_macros = "0.27.2"

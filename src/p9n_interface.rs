@@ -1,7 +1,9 @@
 use super::*;
 // 共通のインターフェース
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
 pub enum Button {
     PS,
     L1,
@@ -16,12 +18,6 @@ pub enum Button {
     DpadRight,
     DpadUp,
     DpadDown,
-}
-
-impl Button {
-    pub const fn count() -> usize {
-        13 // enum の総数
-    }
 }
 
 pub trait GamepadLayout {
@@ -50,14 +46,14 @@ pub trait GamepadLayout {
 
 pub struct Gamepad<L: GamepadLayout> {
     layout: L,
-    prev_buttons: [bool; Button::count()],
+    prev_buttons: Vec<bool>,
 }
 
 impl<L: GamepadLayout> Gamepad<L> {
     pub fn new(layout: L) -> Self {
         Self {
             layout,
-            prev_buttons: [false; Button::count()],
+            prev_buttons: vec![false; Button::iter().count()],
         }
     }
     /// ボタンが現在押されているか（汎用版）
