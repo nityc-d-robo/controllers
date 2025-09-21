@@ -83,4 +83,47 @@ impl GamepadLayout for DualShock4Layout {
         self.is_valid_axis(msg, AXES_DUALSHOCK4::DPAD_Y)
             && msg.axes.as_slice()[AXES_DUALSHOCK4::DPAD_Y] < 0.0
     }
+
+    fn select(&self, _msg: &Joy) -> bool {
+        todo!();
+        //うまく動かない　気がする　知らない　そもそもPS4コントローラでSELECTボタンなんてない気がする
+        // self.is_valid_button(msg, BUTTONS_DUALSHOCK4::SELECT)
+        //     && msg.buttons.as_slice()[BUTTONS_DUALSHOCK4::SELECT] == 1
+    }
+
+    fn start(&self, _msg: &Joy) -> bool {
+        todo!();
+        // 同じく
+        // self.is_valid_button(msg, BUTTONS_DUALSHOCK4::START)
+        //     && msg.buttons.as_slice()[BUTTONS_DUALSHOCK4::START] == 1
+    }
+
+    fn stick_l_x(&self, msg: &Joy) -> f32 {
+        if self.is_valid_axis(msg, AXES_DUALSHOCK4::STICK_LX) {
+            msg.axes.as_slice()[AXES_DUALSHOCK4::STICK_LX]
+        } else {
+            0.0
+        }
+    }
+    fn stick_l_y(&self, msg: &Joy) -> f32 {
+        if self.is_valid_axis(msg, AXES_DUALSHOCK4::STICK_LY) {
+            msg.axes.as_slice()[AXES_DUALSHOCK4::STICK_LY]
+        } else {
+            0.0
+        }
+    }
+    fn stick_r_x(&self, msg: &Joy) -> f32 {
+        if self.is_valid_axis(msg, AXES_DUALSHOCK4::STICK_RX) {
+            msg.axes.as_slice()[AXES_DUALSHOCK4::STICK_RX]
+        } else {
+            0.0
+        }
+    }
+    fn stick_r_y(&self, msg: &Joy) -> f32 {
+        if self.is_valid_axis(msg, AXES_DUALSHOCK4::STICK_RY) {
+            msg.axes.as_slice()[AXES_DUALSHOCK4::STICK_RY]
+        } else {
+            0.0
+        }
+    }
 }

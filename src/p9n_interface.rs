@@ -18,6 +18,15 @@ pub enum Button {
     DpadRight,
     DpadUp,
     DpadDown,
+    Select,
+    Start,
+}
+
+pub enum Axes {
+    StickLX,
+    StickLY,
+    StickRX,
+    StickRY,
 }
 
 pub trait GamepadLayout {
@@ -34,6 +43,13 @@ pub trait GamepadLayout {
     fn dpad_right(&self, msg: &Joy) -> bool;
     fn dpad_up(&self, msg: &Joy) -> bool;
     fn dpad_down(&self, msg: &Joy) -> bool;
+    fn select(&self, msg: &Joy) -> bool;
+    fn start(&self, msg: &Joy) -> bool;
+
+    fn stick_l_x(&self, msg: &Joy) -> f32;
+    fn stick_l_y(&self, msg: &Joy) -> f32;
+    fn stick_r_x(&self, msg: &Joy) -> f32;
+    fn stick_r_y(&self, msg: &Joy) -> f32;
 
     // 共通のヘルパー
     fn is_valid_button(&self, msg: &Joy, button: usize) -> bool {
@@ -45,7 +61,7 @@ pub trait GamepadLayout {
 }
 
 pub struct Gamepad<L: GamepadLayout> {
-    layout: L,
+    pub layout: L,
     prev_buttons: Vec<bool>,
 }
 
@@ -72,6 +88,8 @@ impl<L: GamepadLayout> Gamepad<L> {
             Button::DpadRight => self.layout.dpad_right(msg),
             Button::DpadUp => self.layout.dpad_up(msg),
             Button::DpadDown => self.layout.dpad_down(msg),
+            Button::Select => self.layout.select(msg),
+            Button::Start => self.layout.start(msg),
         }
     }
 
@@ -91,5 +109,14 @@ impl<L: GamepadLayout> Gamepad<L> {
         let previous = self.prev_buttons[idx];
         self.prev_buttons[idx] = current;
         previous && !current
+    }
+
+    pub fn axis(&self, msg: &Joy, axis: Axes) -> f32 {
+        match axis {
+            Axes::StickLX => self.layout.stick_l_x(msg),
+            Axes::StickLY => self.layout.stick_l_y(msg),
+            Axes::StickRX => self.layout.stick_r_x(msg),
+            Axes::StickRY => self.layout.stick_r_y(msg),
+        }
     }
 }

@@ -84,6 +84,43 @@ impl GamepadLayout for DualSenseLayout {
         self.is_valid_axis(msg, AXES_DUALSENSE::DPAD_Y)
             && msg.axes.as_slice()[AXES_DUALSENSE::DPAD_Y] < 0.0
     }
+    fn select(&self, msg: &Joy) -> bool {
+        self.is_valid_button(msg, BUTTONS_DUALSENSE::SELECT)
+            && msg.buttons.as_slice()[BUTTONS_DUALSENSE::SELECT] == 1
+    }
+    fn start(&self, msg: &Joy) -> bool {
+        self.is_valid_button(msg, BUTTONS_DUALSENSE::START)
+            && msg.buttons.as_slice()[BUTTONS_DUALSENSE::START] == 1
+    }
+
+    fn stick_l_x(&self, msg: &Joy) -> f32 {
+        if self.is_valid_axis(msg, AXES_DUALSENSE::STICK_LX) {
+            msg.axes.as_slice()[AXES_DUALSENSE::STICK_LX]
+        } else {
+            0.0
+        }
+    }
+    fn stick_l_y(&self, msg: &Joy) -> f32 {
+        if self.is_valid_axis(msg, AXES_DUALSENSE::STICK_LY) {
+            msg.axes.as_slice()[AXES_DUALSENSE::STICK_LY]
+        } else {
+            0.0
+        }
+    }
+    fn stick_r_x(&self, msg: &Joy) -> f32 {
+        if self.is_valid_axis(msg, AXES_DUALSENSE::STICK_RX) {
+            msg.axes.as_slice()[AXES_DUALSENSE::STICK_RX]
+        } else {
+            0.0
+        }
+    }
+    fn stick_r_y(&self, msg: &Joy) -> f32 {
+        if self.is_valid_axis(msg, AXES_DUALSENSE::STICK_RY) {
+            msg.axes.as_slice()[AXES_DUALSENSE::STICK_RY]
+        } else {
+            0.0
+        }
+    }
 }
 
 impl DualSenseLayout {
@@ -92,5 +129,15 @@ impl DualSenseLayout {
     }
     pub fn r2_analog(&self, msg: &Joy) -> f32 {
         msg.axes.as_slice()[AXES_DUALSENSE::R2]
+    }
+
+    pub fn stick_left_push(&self, msg: &Joy) -> bool {
+        self.is_valid_button(msg, BUTTONS_DUALSENSE::STICK_L_PUSH)
+            && msg.buttons.as_slice()[BUTTONS_DUALSENSE::STICK_L_PUSH] == 1
+    }
+
+    pub fn stick_right_push(&self, msg: &Joy) -> bool {
+        self.is_valid_button(msg, BUTTONS_DUALSENSE::STICK_R_PUSH)
+            && msg.buttons.as_slice()[BUTTONS_DUALSENSE::STICK_R_PUSH] == 1
     }
 }

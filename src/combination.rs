@@ -7,7 +7,8 @@ use strum::IntoEnumIterator;
 pub enum State {
     Pressed,
     PressedEdge,
-    Ignored,
+    ReleasedEdge,
+    Ignore,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -31,6 +32,14 @@ impl ButtonCombination {
         }
     }
 
+    pub fn all(&self, state: State) -> Self {
+        let mut buttons = HashMap::new();
+        for button in Button::iter() {
+            buttons.insert(button, state);
+        }
+        ButtonCombination { buttons }
+    }
+
     pub fn add(&self, button_state: ButtonState) -> Self {
         let mut next = self.clone();
         next.buttons.insert(button_state.0, button_state.1);
@@ -40,7 +49,7 @@ impl ButtonCombination {
     pub fn ignores(&self, buttons: &[Button]) -> Self {
         let mut next = self.clone();
         for &button in buttons {
-            next.buttons.insert(button, State::Ignored);
+            next.buttons.insert(button, State::Ignore);
         }
         next
     }
@@ -52,7 +61,8 @@ impl ButtonCombination {
                 .map_or(!gamepad.pressed(msg, button), |state| match state {
                     State::Pressed => gamepad.pressed(msg, button),
                     State::PressedEdge => gamepad.pressed_edge(msg, button),
-                    State::Ignored => true,
+                    State::ReleasedEdge => gamepad.released_edge(msg, button),
+                    State::Ignore => true,
                 })
         })
     }
